@@ -1,0 +1,8 @@
+.env
+uploads/*
+!uploads/.gitkeep
+vendor/
+db_data/
+.gitignore
+CLAUDE.md
+en.subject.pdf
