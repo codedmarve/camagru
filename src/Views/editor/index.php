@@ -15,6 +15,7 @@ ob_start();
         overflow: hidden;
         padding-top: 1rem !important;
         padding-bottom: 0 !important;
+        flex-grow: 0 !important; /* opt out of the global sticky-footer growth on this fixed-height page */
     }
 </style>
 

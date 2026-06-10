@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::getToken()) ?>">
     <title><?= htmlspecialchars($title ?? 'Camagru') ?></title>
+    <!-- Inline SVG favicon: stops the browser's automatic /favicon.ico request (avoids a 404 in the console) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📷</text></svg>">
     <!-- Tailwind CSS compiled to a static asset (no runtime JS, works offline) -->
     <link rel="stylesheet" href="/css/app.css">
     <script>
@@ -13,7 +15,7 @@
         window.csrfHeaders = { 'X-CSRF-Token': window.csrfToken };
     </script>
 </head>
-<body class="bg-gray-100 min-h-screen pt-16">
+<body class="bg-gray-100 min-h-screen pt-16 flex flex-col">
     <!-- Navigation (Fixed) -->
     <nav class="bg-white shadow-md fixed top-0 left-0 right-0 z-50">
         <div class="max-w-6xl mx-auto px-4">
@@ -39,7 +41,7 @@
     </nav>
 
     <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 py-8">
+    <main class="max-w-6xl mx-auto px-4 py-8 w-full grow">
         <?= $content ?>
     </main>
 
