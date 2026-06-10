@@ -215,8 +215,8 @@ class ProfileController
         }
 
         // Validate new password
-        if (strlen($newPassword) < 8) {
-            $errors['new_password'] = 'New password must be at least 8 characters';
+        if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d).{8,}$/', $newPassword)) {
+            $errors['new_password'] = 'New password must be at least 8 characters and include a letter and a number';
         }
 
         // Confirm passwords match

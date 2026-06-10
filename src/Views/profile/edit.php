@@ -139,7 +139,7 @@ ob_start();
                 <?php if (!empty($passwordErrors['new_password'])): ?>
                     <p class="text-red-500 text-sm mt-1"><?= htmlspecialchars($passwordErrors['new_password']) ?></p>
                 <?php else: ?>
-                    <p class="text-gray-500 text-sm mt-1">Minimum 8 characters</p>
+                    <p class="text-gray-500 text-sm mt-1">At least 8 characters, including a letter and a number</p>
                 <?php endif; ?>
             </div>
 

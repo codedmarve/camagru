@@ -285,8 +285,8 @@ class AuthController
 
         // Validate password
         $errors = [];
-        if (strlen($password) < 8) {
-            $errors['password'] = 'Password must be at least 8 characters';
+        if (!preg_match('/^(?=.*[A-Za-z])(?=.*\d).{8,}$/', $password)) {
+            $errors['password'] = 'Password must be at least 8 characters and include a letter and a number';
         }
         if ($password !== $passwordConfirm) {
             $errors['password_confirm'] = 'Passwords do not match';
@@ -336,8 +336,8 @@ class AuthController
         // Password validation
         if (empty($password)) {
             $errors['password'] = 'Password is required';
-        } elseif (strlen($password) < 8) {
-            $errors['password'] = 'Password must be at least 8 characters';
+        } elseif (!preg_match('/^(?=.*[A-Za-z])(?=.*\d).{8,}$/', $password)) {
+            $errors['password'] = 'Password must be at least 8 characters and include a letter and a number';
         }
 
         // Password confirmation

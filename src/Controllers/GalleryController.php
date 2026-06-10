@@ -169,7 +169,8 @@ class GalleryController
             'success' => true,
             'comment' => [
                 'id' => $commentId,
-                'content' => htmlspecialchars($content),
+                // Return raw content; the client escapes it via escapeHtml()
+                'content' => $content,
                 'username' => $_SESSION['username'],
                 'user_id' => $_SESSION['user_id'],
                 'created_at' => date('Y-m-d H:i:s')

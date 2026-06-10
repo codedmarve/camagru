@@ -1,4 +1,6 @@
 .env
+# Tailwind build tool (large binary) — compiled output public/css/app.css is committed
+tailwind/tailwindcss
 uploads/*
 !uploads/.gitkeep
 vendor/

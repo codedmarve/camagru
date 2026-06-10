@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="<?= htmlspecialchars(Csrf::getToken()) ?>">
     <title><?= htmlspecialchars($title ?? 'Camagru') ?></title>
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tailwind CSS compiled to a static asset (no runtime JS, works offline) -->
+    <link rel="stylesheet" href="/css/app.css">
     <script>
         // Global CSRF helper for AJAX requests
         window.csrfToken = document.querySelector('meta[name="csrf-token"]').content;
@@ -42,5 +42,12 @@
     <main class="max-w-6xl mx-auto px-4 py-8">
         <?= $content ?>
     </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t mt-8 py-4">
+        <div class="max-w-6xl mx-auto px-4 text-center text-sm text-gray-500">
+            &copy; <?= date('Y') ?> Camagru
+        </div>
+    </footer>
 </body>
 </html>
