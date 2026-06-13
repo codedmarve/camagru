@@ -3,6 +3,36 @@
 // Start session for all requests
 session_start();
 
+// --- Session expiry (idle + absolute timeout) ---
+// PHP's built-in session garbage collection is probabilistic and often disabled
+// on Debian-based images, so the login session is expired here at the app level.
+// It ends after some inactivity (idle) or a hard maximum since login (absolute),
+// not only when the user clicks logout.
+$sessionIdleTimeout     = 1800;   // 30 minutes since the last request
+$sessionAbsoluteTimeout = 43200;  // 12 hours since login, even while active
+
+if (isset($_SESSION['user_id'])) {
+    $now = time();
+    $idleExpired = isset($_SESSION['last_activity'])
+        && ($now - $_SESSION['last_activity']) > $sessionIdleTimeout;
+    $absoluteExpired = isset($_SESSION['created_at'])
+        && ($now - $_SESSION['created_at']) > $sessionAbsoluteTimeout;
+
+    if ($idleExpired || $absoluteExpired) {
+        // Clear all data, then rotate to a fresh session id so the expired one
+        // can't be reused. Regenerating (rather than destroying) keeps a valid
+        // cookie, so the "session expired" message survives to the login page.
+        $_SESSION = [];
+        session_regenerate_id(true);
+        $_SESSION['errors'] = ['general' => 'Your session expired. Please log in again.'];
+    } else {
+        // Active session: record this request's time (and backfill timestamps
+        // for sessions that predate this feature).
+        $_SESSION['last_activity'] = $now;
+        $_SESSION['created_at'] ??= $now;
+    }
+}
+
 // Load CSRF helper and generate token for all requests
 require_once __DIR__ . '/../src/Helpers/Csrf.php';
 Csrf::generate();

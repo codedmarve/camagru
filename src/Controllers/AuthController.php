@@ -138,6 +138,10 @@ class AuthController
         $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
 
+        // Timestamps for session expiry (idle + absolute timeout, enforced in index.php)
+        $_SESSION['created_at'] = time();
+        $_SESSION['last_activity'] = time();
+
         // Regenerate CSRF token after login to prevent session fixation
         Csrf::regenerate();
 
