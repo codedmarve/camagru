@@ -17,6 +17,14 @@ ob_start();
         padding-bottom: 0 !important;
         flex-grow: 0 !important; /* opt out of the global sticky-footer growth on this fixed-height page */
     }
+    /* Permanent highlight for the active overlay.
+       !important beats both the base .border-transparent and hover:border-indigo-300
+       utilities, which otherwise win on stylesheet source-order. */
+    .overlay-btn.selected {
+        border-color: #4f46e5 !important; /* indigo-600 */
+        background-color: #eef2ff;        /* indigo-50 */
+        box-shadow: 0 0 0 2px #4f46e5;
+    }
 </style>
 
 <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 h-full">
@@ -200,6 +208,9 @@ document.addEventListener('DOMContentLoaded', function() {
             webcamVideo.srcObject = webcamStream;
             webcamVideo.classList.remove('hidden');
             noWebcamMsg.classList.add('hidden');
+            // Stream is now live — refresh the capture button (getUserMedia is async,
+            // so the earlier synchronous call ran before webcamStream was set).
+            updateCaptureButton();
         } catch (error) {
             console.error('Webcam error:', error);
             webcamVideo.classList.add('hidden');
@@ -475,9 +486,9 @@ document.addEventListener('DOMContentLoaded', function() {
     overlayBtns.forEach(btn => {
         btn.addEventListener('click', function() {
             // Remove selection from all
-            overlayBtns.forEach(b => b.classList.remove('border-indigo-600'));
-            // Select this one
-            this.classList.add('border-indigo-600');
+            overlayBtns.forEach(b => b.classList.remove('selected'));
+            // Select this one (permanent highlight while active)
+            this.classList.add('selected');
             selectedOverlay = {
                 id: this.dataset.overlayId,
                 url: this.dataset.overlayUrl
