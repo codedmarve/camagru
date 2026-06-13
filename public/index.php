@@ -19,6 +19,7 @@ $routes = [
     'GET' => [
         '/' => ['HomeController', 'index'],
         '/gallery' => ['GalleryController', 'index'],
+        '/gallery/feed' => ['GalleryController', 'feed'],
         '/auth/login' => ['AuthController', 'showLogin'],
         '/auth/register' => ['AuthController', 'showRegister'],
         '/auth/logout' => ['AuthController', 'logout'],

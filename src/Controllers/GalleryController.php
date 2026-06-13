@@ -28,29 +28,63 @@ class GalleryController
      */
     public function index(): void
     {
-        // Get current page from query string
         $page = max(1, (int)($_GET['page'] ?? 1));
+        $data = $this->getPageData($page);
+
+        require __DIR__ . '/../Views/gallery/index.php';
+    }
+
+    /**
+     * Return one page of gallery cards as an HTML fragment (for infinite scroll).
+     * Reuses the same _card.php partial as the full page, so markup and escaping
+     * live in exactly one place. An empty body signals "no more pages".
+     */
+    public function feed(): void
+    {
+        $page = max(1, (int)($_GET['page'] ?? 1));
+        $data = $this->getPageData($page);
+
+        header('Content-Type: text/html; charset=UTF-8');
+
+        // Past the last page: return nothing so the client stops requesting more.
+        if ($page > $data['totalPages'] || empty($data['images'])) {
+            return;
+        }
+
+        // Expose the variables the partial expects, then render each card.
+        $images        = $data['images'];
+        $comments      = $data['comments'];
+        $userLikes     = $data['userLikes'];
+        $isLoggedIn    = $data['isLoggedIn'];
+        $currentUserId = $data['currentUserId'];
+
+        foreach ($images as $image) {
+            require __DIR__ . '/../Views/gallery/_card.php';
+        }
+    }
+
+    /**
+     * Load one page of images plus their comments and the current user's likes.
+     * Shared by index() (full page) and feed() (infinite-scroll fragment).
+     */
+    private function getPageData(int $page): array
+    {
         $offset = ($page - 1) * self::IMAGES_PER_PAGE;
 
-        // Get paginated images
         $images = $this->image->getAll(self::IMAGES_PER_PAGE, $offset);
         $totalImages = $this->image->countAll();
-        $totalPages = ceil($totalImages / self::IMAGES_PER_PAGE);
+        $totalPages = (int)ceil($totalImages / self::IMAGES_PER_PAGE);
 
-        // Get image IDs for batch queries
+        // Batch-load comments and likes for just this page's images
         $imageIds = array_column($images, 'id');
-
-        // Get comments for all images
         $comments = $this->comment->getForImages($imageIds);
 
-        // Get user's likes if logged in
         $userLikes = [];
         if (isset($_SESSION['user_id'])) {
             $userLikes = $this->like->getUserLikes($_SESSION['user_id'], $imageIds);
         }
 
-        // Pass data to view
-        $data = [
+        return [
             'images' => $images,
             'comments' => $comments,
             'userLikes' => $userLikes,
@@ -59,8 +93,6 @@ class GalleryController
             'isLoggedIn' => isset($_SESSION['user_id']),
             'currentUserId' => $_SESSION['user_id'] ?? null,
         ];
-
-        require __DIR__ . '/../Views/gallery/index.php';
     }
 
     /**
