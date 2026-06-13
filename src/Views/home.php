@@ -30,7 +30,7 @@ ob_start();
         <?php else: ?>
             <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 <?php foreach ($userImages as $image): ?>
-                    <div class="bg-white rounded-lg shadow-md overflow-hidden group">
+                    <div class="photo-card relative bg-white rounded-lg shadow-md overflow-hidden group" data-image-id="<?= $image['id'] ?>">
                         <div class="aspect-square">
                             <img
                                 src="/uploads/<?= htmlspecialchars($image['filename']) ?>"
@@ -38,6 +38,16 @@ ob_start();
                                 class="w-full h-full object-cover"
                             >
                         </div>
+                        <!-- These are all the current user's own photos, so each is deletable. -->
+                        <button
+                            class="delete-image absolute top-1 right-1 bg-red-600 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition"
+                            data-image-id="<?= $image['id'] ?>"
+                            title="Delete photo"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
                         <div class="p-2 text-xs text-gray-500">
                             <?= date('M j, Y', strtotime($image['created_at'])) ?>
                         </div>
@@ -74,6 +84,42 @@ ob_start();
             </a>
         </div>
     </div>
+<?php endif; ?>
+
+<?php if ($isLoggedIn && !empty($userImages)): ?>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.delete-image').forEach(btn => {
+        btn.addEventListener('click', async function() {
+            if (!confirm('Delete this photo? This cannot be undone.')) return;
+
+            const imageId = this.dataset.imageId;
+            const card = this.closest('.photo-card');
+
+            try {
+                const response = await fetch('/editor/delete', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': window.csrfToken
+                    },
+                    body: JSON.stringify({ id: imageId })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    if (card) card.remove();
+                } else {
+                    alert(result.error || 'Failed to delete photo');
+                }
+            } catch (error) {
+                console.error('Delete image error:', error);
+            }
+        });
+    });
+});
+</script>
 <?php endif; ?>
 
 <?php

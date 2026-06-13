@@ -235,6 +235,37 @@ document.addEventListener('DOMContentLoaded', function() {
                 section.classList.toggle('hidden');
             });
         }
+
+        // Delete own photo (button is only rendered on the current user's images;
+        // the server re-checks ownership). Reuses the existing /editor/delete endpoint.
+        const deleteImage = article.querySelector('.delete-image');
+        if (deleteImage) {
+            deleteImage.addEventListener('click', async function() {
+                if (!confirm('Delete this photo? This cannot be undone.')) return;
+
+                const imageId = this.dataset.imageId;
+                try {
+                    const response = await fetch('/editor/delete', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-Token': window.csrfToken
+                        },
+                        body: JSON.stringify({ id: imageId })
+                    });
+
+                    const result = await response.json();
+
+                    if (result.success) {
+                        article.remove();
+                    } else {
+                        alert(result.error || 'Failed to delete photo');
+                    }
+                } catch (error) {
+                    console.error('Delete image error:', error);
+                }
+            });
+        }
     }
 
     // Bind cards rendered on the initial page load
