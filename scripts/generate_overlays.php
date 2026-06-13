@@ -38,7 +38,7 @@ function createFrameOverlay(string $path, int $width, int $height, array $color,
     imagefilledrectangle($img, $width - $borderWidth, 0, $width, $height, $frameColor);
 
     imagepng($img, $path);
-    imagedestroy($img);
+    unset($img);
 
     echo "Created: $path\n";
 }
@@ -71,7 +71,7 @@ function createCornerOverlay(string $path, int $width, int $height, array $color
     imagefilledellipse($img, $width, $height, $cornerSize * 2, $cornerSize * 2, $cornerColor);
 
     imagepng($img, $path);
-    imagedestroy($img);
+    unset($img);
 
     echo "Created: $path\n";
 }
@@ -103,7 +103,7 @@ function createStarsOverlay(string $path, int $width, int $height): void
     }
 
     imagepng($img, $path);
-    imagedestroy($img);
+    unset($img);
 
     echo "Created: $path\n";
 }
@@ -141,7 +141,7 @@ function createSpeechBubbleOverlay(string $path, int $width, int $height): void
     imagefilledpolygon($img, $points, 3, $white);
 
     imagepng($img, $path);
-    imagedestroy($img);
+    unset($img);
 
     echo "Created: $path\n";
 }
@@ -180,7 +180,7 @@ function createHeartOverlay(string $path, int $width, int $height): void
     }
 
     imagepng($img, $path);
-    imagedestroy($img);
+    unset($img);
 
     echo "Created: $path\n";
 }

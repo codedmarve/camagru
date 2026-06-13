@@ -316,7 +316,7 @@ class EditorController
         // Load overlay (PNG with transparency)
         $overlay = imagecreatefrompng($overlayPath);
         if ($overlay === false) {
-            imagedestroy($webcamImage);
+            unset($webcamImage);
             return false;
         }
 
@@ -366,10 +366,9 @@ class EditorController
         // Save the final image
         $success = imagepng($finalImage, $filepath);
 
-        // Clean up
-        imagedestroy($webcamImage);
-        imagedestroy($overlay);
-        imagedestroy($finalImage);
+        // Clean up (GdImage objects are GC'd automatically since PHP 8.0;
+        // unset() drops the references explicitly. imagedestroy() is obsolete.)
+        unset($webcamImage, $overlay, $finalImage);
 
         if (!$success) {
             return false;
