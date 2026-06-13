@@ -16,6 +16,11 @@ services:
       - DB_PASS=${DB_PASS}
       - MAIL_HOST=${MAIL_HOST}
       - MAIL_PORT=${MAIL_PORT}
+      - MAIL_FROM=${MAIL_FROM}
+      - MAIL_TLS=${MAIL_TLS}
+      - MAIL_AUTH=${MAIL_AUTH}
+      - MAIL_USER=${MAIL_USER}
+      - MAIL_PASS=${MAIL_PASS}
 
   db:
     image: mysql:8.0
